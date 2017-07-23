@@ -1,14 +1,11 @@
 ###GENERAL TODO:
-###-poveži gumbe na primerne command funkcije
-###-prej napiši te command fukcije
-###-naštudiraj: branje iz Entry, pridobivanje vrednosti iz IntVar,...
+###-poženi z večimi algoritmi
 ###-razno
 
 import tkinter as tk
 import tkinter.filedialog as tkfd
 import time
-
-PASSWORD = ''
+import os
 
 class Encryptor:
     def __init__(self, okno):
@@ -22,6 +19,8 @@ class Encryptor:
 
         self.file_name = ''
         self.file_var = tk.IntVar()
+
+        self.password = ''
         
         self.zgradi(okno)
 
@@ -93,9 +92,9 @@ class Encryptor:
         cb_file.grid(row = 4, column = 1)
 
         #pozeni
-            #TODO: command nastavi na izvajanje funkcij
         b_go = tk.Button(pozeni, text='GO!', height = 3, width = 8,
-                         bg='red', font='bold')
+                         bg='red', font='bold',
+                         command = self.idemo_momci)
 
         b_go.pack()
 
@@ -129,16 +128,80 @@ class Encryptor:
         hwindow.mainloop()
 
     def set_password(self):
-        PASSWORD = self.pw_bar.get()
+        self.password = self.pw_bar.get()
 
-        if PASSWORD != '':
-            self.log += 'Password set successfully.\n'
+        if self.password != '':
+            self.log += 'Password set successfully.\n' + self.password + '\n'
             self.status_lines += 1
             self.osvezi_status()
         else:
             self.log += 'There were problems setting the password.\n'
             self.status_lines += 1
             self.osvezi_status()
+
+    def idemo_momci(self):
+        self.file_name = self.ime_dat.get()
+        
+        if self.alg.get() == 1:
+            self.log += 'Ceasar cypher selected.\n'
+            self.status_lines += 1
+            self.osvezi_status()
+
+            import CEASAR
+
+            self.log += 'Processing...'
+            self.osvezi_status()
+            with open(self.file_name) as i_dat:
+                with open(self.file_name[:-4] + '00' + '.txt', 'w') as o_dat:
+                    for v in i_dat:
+                        for c in v:
+                            if self.method.get() == 1:
+                                o_dat.write(CEASAR.encrypt(c, self.password))
+                            if self.method.get() == 2:
+                                o_dat.write(CEASAR.decrypt(c, self.password))
+            self.log += 'Done.\n'
+            self.status_lines += 1
+            self.osvezi_status()
+
+        if self.alg.get() == 2:
+            self.log += "Vigenere's square cypher selecte.\n"
+            self.status_lines += 1
+            self.osvezi_status()
+
+            import CEASAR
+
+            self.log += 'Processing...'
+            self.osvezi_status()
+            i = 0
+            l = len(self.password)
+            with open(self.file_name) as i_dat:
+                with open(self.file_name[:-4] + '00' + '.txt', 'w') as o_dat:
+                    for v in i_dat:
+                        for c in v:
+                            if self.method.get() == 1:
+                                o_dat.write(CEASAR.encrypt(c, self.password[i % l]))
+                            if self.method.get() == 2:
+                                o_dat.write(CEASAR.decrypt(c, self.password[i % l]))
+                            i += 1
+            self.log += 'Done.\n'
+            self.status_lines += 1
+            self.osvezi_status
+
+
+        if self.file_var.get() == 1:
+            os.remove(self.file_name)
+            self.log += 'Original file removed successfully.\n'
+            self.status_lines += 1
+            self.osvezi_status()
+        if self.log_var.get() == 1:
+            self.log += 'Log file will be deleted.\n'
+            self.status_lines += 1
+            self.osvezi_status()
+            self.logiraj()
+            os.remove(self.log_file_name)
+        else:
+            self.logiraj()
+
 
 class Helper():
     def __init__(self, okno):
@@ -148,8 +211,9 @@ class Helper():
         self.text += '    write your Python file, name it CUSTOM.py and then\n'
         self.text += '    select the "Other" option in the algorithms menu.\n'
         self.text += '    BE SURE you name your file right. The file MUST contain\n'
-        self.text += '    at least 2 functions named -encrypt- and -decrypt- (no dashes)\n'
-        self.text += '    that change one character into another.\n\n'
+        self.text += '    at least 2 functions named -encrypt(char, key)- and \n'
+        self.text += '    -decrypt(char, key)- (no dashes) that change one character\n'
+        self.text += '    into another.\n\n'
         self.text += '2 CEASAR ENYCRYPTION\n'
         self.text += '    This is a simple ceasar code, password MUST be only\n'
         self.text += '    only one character that represents indentation in\n'

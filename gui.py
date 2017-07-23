@@ -29,9 +29,9 @@ class Encryptor:
         status = tk.Frame(okno, height = 100, width = 100,
                           padx=5, pady=5, bd=5, relief='raised')
         algoritmi = tk.Frame(okno, height = 480, width = 100,
-                             bd=3, relief='sunken')
+                             bd=3, relief='raised')
         datoteke = tk.Frame(okno, height = 100, width = 590,
-                            bd=3, relief='sunken')
+                            bd=3, relief='raised')
         pozeni = tk.Frame(okno, height = 100, width = 100, bg='red',
                           relief='groove', bd=3)
         
@@ -41,7 +41,7 @@ class Encryptor:
         pozeni.grid(row = 1, column = 1)
 
         #status
-        self.status_bar = tk.Label(status, height = 30, width = 80,
+        self.status_bar = tk.Label(status, height = 30, width = 84,
                                    bg = 'white', anchor='nw',
                                    justify='left')
         self.status_bar.grid(row=0, column=0)
@@ -94,7 +94,7 @@ class Encryptor:
         #pozeni
         b_go = tk.Button(pozeni, text='GO!', height = 3, width = 8,
                          bg='red', font='bold',
-                         command = self.idemo_momci)
+                         command = self.gremo_fantje)
 
         b_go.pack()
 
@@ -139,7 +139,7 @@ class Encryptor:
             self.status_lines += 1
             self.osvezi_status()
 
-    def idemo_momci(self):
+    def gremo_fantje(self):
         self.file_name = self.ime_dat.get()
         
         if self.alg.get() == 1:
@@ -187,6 +187,27 @@ class Encryptor:
             self.status_lines += 1
             self.osvezi_status
 
+        if self.alg.get() == -1:
+            self.log += 'Custom cypher algorithm selected.\n'
+            self.status_lines += 1
+            self.osvezi_status()
+
+            import CUSTOM
+
+            self.log += 'Processing...'
+            self.osvezi_status()
+            with open(self.file_name) as i_dat:
+                with open(self.file_name[:-4] + '00'+ '.txt', 'w') as o_dat:
+                    for v in i_dat:
+                        for c in v:
+                            if self.method.get() == 1:
+                                o_dat.write(CUSTOM.encrypt(c, self.password))
+                            if self.method.get() == 2:
+                                o_dat.write(CUSTOM.decrypt(c, self.password))
+            self.log += 'Done.\n'
+            self.status_lines += 1
+            self.osvezi_status()
+
 
         if self.file_var.get() == 1:
             os.remove(self.file_name)
@@ -206,10 +227,12 @@ class Encryptor:
 class Helper():
     def __init__(self, okno):
         self.text = 'Welcome to the helping screen of Encryptor!\n\n'
+        self.text += 'NOTE: Be sure to always set your password!\n\n'
         self.text += '1 CUSTOM ENCRYPTION\n'
         self.text += '    For encryption with your custom algorithm simply\n'
         self.text += '    write your Python file, name it CUSTOM.py and then\n'
         self.text += '    select the "Other" option in the algorithms menu.\n'
+        self.text += '    File MUST be in the same directory as the program.\n'
         self.text += '    BE SURE you name your file right. The file MUST contain\n'
         self.text += '    at least 2 functions named -encrypt(char, key)- and \n'
         self.text += '    -decrypt(char, key)- (no dashes) that change one character\n'
@@ -223,7 +246,7 @@ class Helper():
         self.text += '    are no special characters. If you wish to change\n'
         self.text += '    the table and/or add characters, modify the file\n'
         self.text += '    named CEASAR.py.\n\n'
-        self.text += '3 VINEGERE SQUARE ENCRYPTION\n'
+        self.text += "3 VINEGERE'S SQUARE ENCRYPTION\n"
         self.text += '    This is a polyalphabetic version of the ceasar code.\n'
         self.text += '    Password should be a word, no spaces or special\n'
         self.text += '    characters. If you wish to add special characters,\n'
@@ -232,6 +255,7 @@ class Helper():
         self.zgradi(okno)
 
     def zgradi(self, okno):
+        okno.title('Helper')
         help_text = tk.Label(okno, justify='left', anchor='w')
         help_text['text'] = self.text
         help_text.pack()

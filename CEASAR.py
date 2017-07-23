@@ -11,11 +11,15 @@ check_table = set(TABLE)
 table_len = len(TABLE)
 
 def encrypt(char, passwd):
-    indent = TABLE.index(passwd)
-    char_i = TABLE.index(char)
-    return TABLE[(char_i + indent) % table_len]
+    if char in check_table:
+        indent = TABLE.index(passwd)
+        char_i = TABLE.index(char)
+        return TABLE[(char_i + indent) % table_len]
+    return char
 
 def decrypt(char, passwd):
-    char_i = TABLE.index(char)
-    indent = TABLE.index(passwd)
-    return TABLE[(table_len + char_i - indent) % table_len]
+    if char in check_table:
+        char_i = TABLE.index(char)
+        indent = TABLE.index(passwd)
+        return TABLE[(table_len + char_i - indent) % table_len]
+    return char

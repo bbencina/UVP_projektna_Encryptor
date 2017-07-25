@@ -139,75 +139,52 @@ class Encryptor:
             self.status_lines += 1
             self.osvezi_status()
 
+    def enc_dec_process(self, method, custom_flag):
+        if custom_flag == False:
+            import CEASAR
+            encrypt, decrypt = CEASAR.encrypt, CEASAR.decrypt
+        if custom_flag == True:
+            import CUSTOM
+            encrypt, decrypt = CUSTOM.encrypt, CUSTOM.decrypt
+
+        self.log += 'Processing...'
+        self.osvezi_status()
+        i = 0
+        with open(self.file_name) as i_dat:
+            with open(self.tempfilename + '00' + self.extension, 'w') as o_dat:
+                for v in i_dat:
+                    for c in v:
+                        if method == 1:
+                            o_dat.write(encrypt(c, self.password, i))
+                        if method == 2:
+                            o_dat.write(decrypt(c, self.password, i))
+                        i += 1
+        self.log += 'Done.\n'
+        self.status_lines += 1
+        self.osvezi_status()
+
     def gremo_fantje(self):
         self.file_name = self.ime_dat.get()
+        self.tempfilename, self.extension = os.path.splitext(self.file_name)
         
         if self.alg.get() == 1:
-            self.log += 'Ceasar cypher selected.\n'
-            self.status_lines += 1
-            self.osvezi_status()
+            cypher = 'Ceasar cypher'
+            flag = False
 
-            import CEASAR
-
-            self.log += 'Processing...'
-            self.osvezi_status()
-            with open(self.file_name) as i_dat:
-                with open(self.file_name[:-4] + '00' + '.txt', 'w') as o_dat:
-                    for v in i_dat:
-                        for c in v:
-                            if self.method.get() == 1:
-                                o_dat.write(CEASAR.encrypt(c, self.password))
-                            if self.method.get() == 2:
-                                o_dat.write(CEASAR.decrypt(c, self.password))
-            self.log += 'Done.\n'
-            self.status_lines += 1
-            self.osvezi_status()
 
         if self.alg.get() == 2:
-            self.log += "Vigenere's square cypher selecte.\n"
-            self.status_lines += 1
-            self.osvezi_status()
-
-            import CEASAR
-
-            self.log += 'Processing...'
-            self.osvezi_status()
-            i = 0
-            l = len(self.password)
-            with open(self.file_name) as i_dat:
-                with open(self.file_name[:-4] + '00' + '.txt', 'w') as o_dat:
-                    for v in i_dat:
-                        for c in v:
-                            if self.method.get() == 1:
-                                o_dat.write(CEASAR.encrypt(c, self.password[i % l]))
-                            if self.method.get() == 2:
-                                o_dat.write(CEASAR.decrypt(c, self.password[i % l]))
-                            i += 1
-            self.log += 'Done.\n'
-            self.status_lines += 1
-            self.osvezi_status
+            cypher = "Vigenere's square cypher"
+            flag = False
 
         if self.alg.get() == -1:
-            self.log += 'Custom cypher algorithm selected.\n'
-            self.status_lines += 1
-            self.osvezi_status()
+            cypher = 'Custom cryptographic algorithm'
+            flag = True
 
-            import CUSTOM
+        self.log += '{0} selected.\n'.format(cypher)
+        self.status_lines += 1
+        self.osvezi_status()
 
-            self.log += 'Processing...'
-            self.osvezi_status()
-            with open(self.file_name) as i_dat:
-                with open(self.file_name[:-4] + '00'+ '.txt', 'w') as o_dat:
-                    for v in i_dat:
-                        for c in v:
-                            if self.method.get() == 1:
-                                o_dat.write(CUSTOM.encrypt(c, self.password))
-                            if self.method.get() == 2:
-                                o_dat.write(CUSTOM.decrypt(c, self.password))
-            self.log += 'Done.\n'
-            self.status_lines += 1
-            self.osvezi_status()
-
+        self.enc_dec_process(self.method.get(), flag)
 
         if self.file_var.get() == 1:
             os.remove(self.file_name)
@@ -226,32 +203,8 @@ class Encryptor:
 
 class Helper():
     def __init__(self, okno):
-        self.text = 'Welcome to the helping screen of Encryptor!\n\n'
-        self.text += 'NOTE: Be sure to always set your password!\n\n'
-        self.text += '1 CUSTOM ENCRYPTION\n'
-        self.text += '    For encryption with your custom algorithm simply\n'
-        self.text += '    write your Python file, name it CUSTOM.py and then\n'
-        self.text += '    select the "Other" option in the algorithms menu.\n'
-        self.text += '    File MUST be in the same directory as the program.\n'
-        self.text += '    BE SURE you name your file right. The file MUST contain\n'
-        self.text += '    at least 2 functions named -encrypt(char, key)- and \n'
-        self.text += '    -decrypt(char, key)- (no dashes) that change one character\n'
-        self.text += '    into another.\n\n'
-        self.text += '2 CEASAR ENYCRYPTION\n'
-        self.text += '    This is a simple ceasar code, password MUST be only\n'
-        self.text += '    only one character that represents indentation in\n'
-        self.text += '    the alphanumerical table. The table is as such:\n'
-        self.text += '    All letters of the English alphabet in order, first\n'
-        self.text += '    uppercase, then lowercase, then numbers 0-9. There\n'
-        self.text += '    are no special characters. If you wish to change\n'
-        self.text += '    the table and/or add characters, modify the file\n'
-        self.text += '    named CEASAR.py.\n\n'
-        self.text += "3 VINEGERE'S SQUARE ENCRYPTION\n"
-        self.text += '    This is a polyalphabetic version of the ceasar code.\n'
-        self.text += '    Password should be a word, no spaces or special\n'
-        self.text += '    characters. If you wish to add special characters,\n'
-        self.text += '    modify the alphanumerical table much like in the ceasar\n'
-        self.text += '    code case.'
+        with open('help.txt') as dat:
+            self.text = dat.read()
         self.zgradi(okno)
 
     def zgradi(self, okno):

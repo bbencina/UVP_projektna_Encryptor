@@ -1,0 +1,30 @@
+Welcome to the helping screen of Encryptor!
+
+NOTE: Be sure to always set your password!
+
+1 CUSTOM ENCRYPTION
+For encryption with your custom algorithm simply
+write your Python file, name it CUSTOM.py and then
+select the "Other" option in the algorithms menu.
+File MUST be in the same directory as the program.
+BE SURE you name your file right. The file MUST contain
+at least 2 functions named -encrypt(char, key)- and 
+-decrypt(char, key)- (no dashes) that change one character
+into another.
+
+2 CEASAR ENYCRYPTION
+This is a simple ceasar code, password MUST be only
+only one character that represents indentation in
+the alphanumerical table. The table is as such:
+All letters of the English alphabet in order, first
+uppercase, then lowercase, then numbers 0-9. There
+are no special characters. If you wish to change
+the table and/or add characters, modify the file
+named CEASAR.py.
+
+3 VINEGERE'S SQUARE ENCRYPTION
+This is a polyalphabetic version of the ceasar code.
+Password should be a word, no spaces or special
+characters. If you wish to add special characters,
+modify the alphanumerical table much like in the ceasar
+code case.

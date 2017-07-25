@@ -10,16 +10,18 @@ TABLE = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
 check_table = set(TABLE)
 table_len = len(TABLE)
 
-def encrypt(char, passwd):
+def encrypt(char, passwd, i):
+    l = len(passwd)
     if char in check_table:
-        indent = TABLE.index(passwd)
+        indent = TABLE.index(passwd[i % l])
         char_i = TABLE.index(char)
         return TABLE[(char_i + indent) % table_len]
     return char
 
-def decrypt(char, passwd):
+def decrypt(char, passwd, i):
+    l = len(passwd)
     if char in check_table:
         char_i = TABLE.index(char)
-        indent = TABLE.index(passwd)
+        indent = TABLE.index(passwd[i % l])
         return TABLE[(table_len + char_i - indent) % table_len]
     return char

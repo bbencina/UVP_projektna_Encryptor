@@ -131,7 +131,7 @@ class Encryptor:
         self.password = self.pw_bar.get()
 
         if self.password != '':
-            self.log += 'Password set successfully.\n' + self.password + '\n'
+            self.log += 'Password set successfully.\n'
             self.status_lines += 1
             self.osvezi_status()
         else:
